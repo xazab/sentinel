@@ -6,13 +6,13 @@ os.environ['SENTINEL_CONFIG'] = os.path.normpath(os.path.join(os.path.dirname(__
 os.environ['SENTINEL_ENV'] = 'test'
 sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), '../../lib')))
 import config
-from dash_config import DashConfig
+from xazab_config import XazabConfig
 
 
 @pytest.fixture
-def dash_conf(**kwargs):
+def xazab_conf(**kwargs):
     defaults = {
-        'rpcuser': 'dashrpc',
+        'rpcuser': 'xazabrpc',
         'rpcpassword': 'EwJeV3fZTyTVozdECF627BkBMnNDwQaVLakG3A4wXYyk',
         'rpcport': 29241,
     }
@@ -34,38 +34,38 @@ rpcport={rpcport}
 
 
 def test_get_rpc_creds():
-    dash_config = dash_conf()
-    creds = DashConfig.get_rpc_creds(dash_config, 'testnet')
+    xazab_config = xazab_conf()
+    creds = XazabConfig.get_rpc_creds(xazab_config, 'testnet')
 
     for key in ('user', 'password', 'port'):
         assert key in creds
-    assert creds.get('user') == 'dashrpc'
+    assert creds.get('user') == 'xazabrpc'
     assert creds.get('password') == 'EwJeV3fZTyTVozdECF627BkBMnNDwQaVLakG3A4wXYyk'
     assert creds.get('port') == 29241
 
-    dash_config = dash_conf(rpcpassword='s00pers33kr1t', rpcport=8000)
-    creds = DashConfig.get_rpc_creds(dash_config, 'testnet')
+    xazab_config = xazab_conf(rpcpassword='s00pers33kr1t', rpcport=8000)
+    creds = XazabConfig.get_rpc_creds(xazab_config, 'testnet')
 
     for key in ('user', 'password', 'port'):
         assert key in creds
-    assert creds.get('user') == 'dashrpc'
+    assert creds.get('user') == 'xazabrpc'
     assert creds.get('password') == 's00pers33kr1t'
     assert creds.get('port') == 8000
 
-    no_port_specified = re.sub('\nrpcport=.*?\n', '\n', dash_conf(), re.M)
-    creds = DashConfig.get_rpc_creds(no_port_specified, 'testnet')
+    no_port_specified = re.sub('\nrpcport=.*?\n', '\n', xazab_conf(), re.M)
+    creds = XazabConfig.get_rpc_creds(no_port_specified, 'testnet')
 
     for key in ('user', 'password', 'port'):
         assert key in creds
-    assert creds.get('user') == 'dashrpc'
+    assert creds.get('user') == 'xazabrpc'
     assert creds.get('password') == 'EwJeV3fZTyTVozdECF627BkBMnNDwQaVLakG3A4wXYyk'
-    assert creds.get('port') == 19998
+    assert creds.get('port') == 41414
 
 
 def test_slurp_config_file():
     import tempfile
 
-    dash_config = """# basic settings
+    xazab_config = """# basic settings
 #testnet=1 # TESTNET
 server=1
 printtoconsole=1
@@ -78,7 +78,7 @@ txindex=1 # enable transaction index
 """
 
     with tempfile.NamedTemporaryFile(mode='w') as temp:
-        temp.write(dash_config)
+        temp.write(xazab_config)
         temp.flush()
-        conf = DashConfig.slurp_config_file(temp.name)
+        conf = XazabConfig.slurp_config_file(temp.name)
         assert conf == expected_stripped_config
